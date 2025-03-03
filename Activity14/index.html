@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html>
+  <head></head>
+  <body>
+    <div id="maincontainer"></div>
+    <script>
+      const mainContainer = document.getElementById("maincontainer");
+
+      const header = document.createElement("h2");
+      header.textContent = "Exercise 04: JavaScript&DOM";
+      mainContainer.appendChild(header);
+
+      const button = document.createElement("button");
+      button.textContent = "Click me to display Date and Time";
+      button.style.cursor = "pointer";
+      mainContainer.appendChild(button);
+
+      const timeDisplay = document.createElement("div");
+      timeDisplay.style.position = "fixed";
+      timeDisplay.style.top = "0";
+      timeDisplay.style.right = "0";
+      timeDisplay.style.backgroundColor = "#fff";
+      timeDisplay.style.border = "1px solid #000";
+      timeDisplay.style.color = "white";
+      timeDisplay.style.cursor = "pointer";
+      document.body.appendChild(timeDisplay);
+
+      let myWorker;
+      if (window.Worker) {
+        try {
+          myWorker = new Worker("worker.js");
+
+          myWorker.onmessage = function (e) {
+            const { currentTime, color } = e.data;
+            timeDisplay.textContent = currentTime;
+            timeDisplay.style.backgroundColor = color;
+          };
+
+          button.addEventListener("click", function () {
+            myWorker.postMessage({ action: "start" });
+            button.style.visibility = "hidden";
+          });
+
+          timeDisplay.addEventListener("click", function () {
+            myWorker.postMessage({ action: "stop" });
+            button.style.visibility = "visible";
+            button.textContent = timeDisplay.textContent;
+            button.style.backgroundColor = timeDisplay.style.backgroundColor;
+            button.style.color = "white";
+            button.style.border = "1px solid #000";
+            timeDisplay.textContent = "";
+            timeDisplay.style.backgroundColor = "#fff";
+          });
+        } catch (error) {
+          console.log("Error: ", error.message);
+        }
+      } else {
+        console.log("Your browser doesn't support web workers.");
+      }
+
+      const personalInfoHeader = document.createElement("p");
+      personalInfoHeader.textContent = "Personal Info";
+      personalInfoHeader.style.color = "pink";
+      personalInfoHeader.style.textDecoration = "underline";
+      mainContainer.appendChild(personalInfoHeader);
+
+      personalInfoHeader.addEventListener("mouseenter", function () {
+        personalInfoHeader.style.color = "blue";
+        personalInfoHeader.style.cursor = "pointer";
+        personalInfoHeader.style.backgroundColor = "yellow";
+        personalInfoHeader.style.width = "fit-content";
+      });
+      personalInfoHeader.addEventListener("mouseleave", function () {
+        personalInfoHeader.style.color = "pink";
+        personalInfoHeader.style.backgroundColor = "white";
+      });
+
+      const infoList = document.createElement("ul");
+      const infoes = [
+        "Name: Montagan Yoochayantee, ID: 66010656",
+        "Subject: Web Application development",
+        "Semester: 2",
+      ];
+      infoes.forEach(function (snapshot) {
+        const listItem = document.createElement("li");
+        listItem.textContent = snapshot;
+        infoList.appendChild(listItem);
+      });
+      infoList.style.display = "none";
+      mainContainer.appendChild(infoList);
+
+      personalInfoHeader.addEventListener("click", function () {
+        if (infoList.style.display === "none") {
+          infoList.style.display = "block";
+        } else {
+          infoList.style.display = "none";
+        }
+      });
+
+      const listImage = [
+        "https://www.hollywoodreporter.com/wp-content/uploads/2016/04/wizarding_world_opening_night.jpg",
+        "https://wallpapers.com/images/featured/harry-potter-houses-pictures-mzmtslyg1mxh5ecy.jpg",
+        "https://gametimers.it/wp-content/uploads/2022/07/harry-potter-quidditch.png",
+        "https://www.animalsaroundtheglobe.com/wp-content/uploads/2024/04/Depositphotos_378202490_XL-1-1200x800.jpg",
+      ];
+
+      const image = document.createElement("img");
+      image.src =
+        "https://www.ce.kmitl.ac.th/api/main/banner/download/1";
+      image.alt = "CE Logo";
+      image.style.maxWidth = "50vw";
+      image.style.maxHeight = "80vh";
+
+      const snapshotsHeader = document.createElement("h1");
+      snapshotsHeader.textContent = "Snapshots";
+      mainContainer.appendChild(snapshotsHeader);
+
+      const snapshotsList = document.createElement("ul");
+      const snapshots = ["Fireworks", "Crest", "Action", "Buffalo"];
+      snapshots.forEach(function (snapshot) {
+        const listItem = document.createElement("li");
+        const text = document.createElement("a");
+        text.href = listImage[snapshots.indexOf(snapshot)];
+
+        text.textContent = snapshot;
+        text.style.color = "blue";
+        text.style.textDecoration = "underline";
+        text.style.cursor = "pointer";
+        text.addEventListener("click", function (event) {
+          event.preventDefault(); 
+          image.src = listImage[snapshots.indexOf(snapshot)]; 
+        });
+
+        listItem.appendChild(text);
+        snapshotsList.appendChild(listItem);
+      });
+      mainContainer.appendChild(snapshotsList);
+      mainContainer.appendChild(image);
+    </script>
+  </body>
+</html>
